@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 
+  tasknumber: MyString
+  choiceartisanstatus: 1
+  choiceartisantime: 2019-12-10 15:47:39
+  beginstatus: 1
+  begintime: 2019-12-10 15:47:39
+  acceptstatus: 1
+  qualstatus: 1
+  qualtime: 2019-12-10 15:47:39
+  contact: MyString
+  contactphone: MyString
+  adcode: MyString
+  province: MyString
+  city: MyString
+  district: MyString
+  address: MyString
+
+two:
+  user_id: 
+  tasknumber: MyString
+  choiceartisanstatus: 1
+  choiceartisantime: 2019-12-10 15:47:39
+  beginstatus: 1
+  begintime: 2019-12-10 15:47:39
+  acceptstatus: 1
+  qualstatus: 1
+  qualtime: 2019-12-10 15:47:39
+  contact: MyString
+  contactphone: MyString
+  adcode: MyString
+  province: MyString
+  city: MyString
+  district: MyString
+  address: MyString

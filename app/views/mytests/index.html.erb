@@ -1,0 +1,132 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Mytests</h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Age</th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @mytests.each do |mytest| %>
+    <tr>
+      <td><%= mytest.name %></td>
+      <td><%= mytest.age %></td>
+      <td><%= link_to 'Show', mytest %></td>
+      <td><%= link_to 'Edit', edit_mytest_path(mytest) %></td>
+      <td><%= link_to 'Destroy', mytest, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Mytest', new_mytest_path %>
+
+
+
+
+
+<main id="js-page-content" role="main" class="page-content">
+  <ol class="breadcrumb page-breadcrumb">
+    <li class="breadcrumb-item"><a href="javascript:void(0);">SmartAdmin</a></li>
+    <li class="breadcrumb-item">Tables</li>
+    <li class="breadcrumb-item active">Basic Tables</li>
+    <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
+  </ol>
+  <div class="subheader">
+    <h1 class="subheader-title">
+      <i class='fal fa-th-list text-primary'></i> Basic tables
+      <small>
+      </small>
+    </h1>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-xl-12">
+      <!--Basic tables-->
+      <div id="panel-1" class="panel">
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="frame-wrap">
+              <table class="table m-0">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Username</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry</td>
+                  <td>the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td colspan="2">Larry the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <h5 class="frame-heading">
+              Inverse
+            </h5>
+            <div class="frame-wrap">
+              <table class="table table-dark m-0">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Username</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry</td>
+                  <td>the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

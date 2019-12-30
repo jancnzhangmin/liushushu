@@ -1,0 +1,2 @@
+module SkillclasHelper
+end
