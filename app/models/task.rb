@@ -3,4 +3,5 @@ class Task < ApplicationRecord
   has_many :progres
   has_many :offers
   has_many :evaluates
+  belongs_to :skill
 end

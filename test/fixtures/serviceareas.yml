@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 
+  province: MyString
+  city: MyString
+  districe: MyString
+  adcode: MyString
+  lng: 9.99
+  lat: 9.99
+
+two:
+  user_id: 
+  province: MyString
+  city: MyString
+  districe: MyString
+  adcode: MyString
+  lng: 9.99
+  lat: 9.99

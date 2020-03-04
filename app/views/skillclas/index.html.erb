@@ -45,6 +45,7 @@
             <thead>
             <tr>
               <th>技能</th>
+              <th>关键字</th>
               <th width="180px">操作</th>
             </tr>
             </thead>
@@ -52,6 +53,7 @@
             <% @skillclas.each do |skillcla| %>
               <tr>
                 <td><%= skillcla.name %></td>
+                <td><%= skillcla.keyword %></td>
                 <td style="padding: 5px;" align="center">
                   <%= link_to  edit_skillcla_path(skillcla), class:'btn btn-info btn-sm waves-effect waves-themed' do %>
                     <span class="fal fa-edit mr-1"></span> 编辑

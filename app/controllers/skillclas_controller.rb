@@ -57,6 +57,6 @@ class SkillclasController < ApplicationController
   end
 
   def skillcla_params
-    params.require(:skillcla).permit(:name)
+    params.require(:skillcla).permit(:name, :keyword)
   end
 end

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  citycode: MyString
+  adcode: MyString
+  name: MyString
+  lng: 9.99
+  lat: 9.99
+  pinyin: MyString
+  fullpinyin: MyString
+
+two:
+  citycode: MyString
+  adcode: MyString
+  name: MyString
+  lng: 9.99
+  lat: 9.99
+  pinyin: MyString
+  fullpinyin: MyString

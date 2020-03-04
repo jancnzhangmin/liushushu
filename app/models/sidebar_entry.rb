@@ -13,6 +13,10 @@ class SidebarEntry
             title: '设置',
             icon: 'fa-info-circle',
             children: [
+                {
+                    href: configs_path,
+                    title: '配置',
+                },
               {
                 href: skillclas_path,
                 title: '技能分类',
@@ -24,6 +28,20 @@ class SidebarEntry
               {
                 href: evaluatetagdefs_path,
                 title: '评价标签定义',
+              },
+              {
+                  href: 'javascript:void(0);',
+                  title: '城市',
+                  children: [
+                      {
+                          href: citycodes_path,
+                          title: '城市列表',
+                      },
+                      {
+                          href: 'javascript:void(0);',
+                          title: '热门城市',
+                      },
+                  ]
               },
               {
                 href: '#',

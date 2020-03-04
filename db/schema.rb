@@ -10,7 +10,56 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_26_085654) do
+ActiveRecord::Schema.define(version: 2020_02_04_032606) do
+
+  create_table "citycodes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "citycode"
+    t.string "adcode"
+    t.string "name"
+    t.decimal "lng", precision: 15, scale: 12
+    t.decimal "lat", precision: 15, scale: 12
+    t.string "pinyin"
+    t.string "fullpinyin"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "commoncts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "citycode"
+    t.string "adcode"
+    t.string "name"
+    t.decimal "lng", precision: 15, scale: 12
+    t.decimal "lat", precision: 15, scale: 12
+    t.string "pinyin"
+    t.string "fullpinyin"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "configs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "appid"
+    t.string "appsecret"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "describeimgs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "describeimg_file_name"
+    t.string "describeimg_content_type"
+    t.integer "describeimg_file_size"
+    t.datetime "describeimg_updated_at"
+    t.string "nonce"
+  end
+
+  create_table "describes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "content"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "evaluates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "task_id"
@@ -25,6 +74,7 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "keyword"
   end
 
   create_table "evaluatetags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -49,6 +99,7 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.text "summary"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "isselect"
   end
 
   create_table "progreimgs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -59,6 +110,7 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.string "progreimg_content_type"
     t.integer "progreimg_file_size"
     t.datetime "progreimg_updated_at"
+    t.string "nonce"
   end
 
   create_table "progres", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -67,12 +119,56 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.integer "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "nonce"
+  end
+
+  create_table "realnames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "name"
+    t.string "phone"
+    t.integer "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "idfront_file_name"
+    t.string "idfront_content_type"
+    t.integer "idfront_file_size"
+    t.datetime "idfront_updated_at"
+    t.string "idback_file_name"
+    t.string "idback_content_type"
+    t.integer "idback_file_size"
+    t.datetime "idback_updated_at"
+  end
+
+  create_table "revicects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "citycode"
+    t.string "adcode"
+    t.string "name"
+    t.decimal "lng", precision: 15, scale: 12
+    t.decimal "lat", precision: 15, scale: 12
+    t.string "pinyin"
+    t.string "fullpinyin"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "serviceareas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "province"
+    t.string "city"
+    t.string "districe"
+    t.string "adcode"
+    t.decimal "lng", precision: 15, scale: 12
+    t.decimal "lat", precision: 15, scale: 12
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "citycode"
   end
 
   create_table "skillclas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "keyword"
   end
 
   create_table "skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -110,6 +206,10 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.string "address"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "skill_id"
+    t.text "summary"
+    t.integer "submitaccept"
+    t.datetime "submitaccepttime"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -124,6 +224,16 @@ ActiveRecord::Schema.define(version: 2019_12_26_085654) do
     t.decimal "lat", precision: 15, scale: 12
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "phone"
+    t.string "province"
+    t.string "city"
+    t.string "district"
+    t.string "adcode"
+    t.string "headurl"
+    t.string "vcode"
+    t.datetime "vcodetime"
+    t.float "rateaverage"
+    t.integer "servicecount"
   end
 
 end

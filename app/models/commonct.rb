@@ -1,0 +1,2 @@
+class Commonct < ApplicationRecord
+end

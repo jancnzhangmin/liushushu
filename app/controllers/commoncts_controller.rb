@@ -1,0 +1,2 @@
+class CommonctsController < ApplicationController
+end

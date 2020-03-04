@@ -1,0 +1,2 @@
+class Revicect < ApplicationRecord
+end
