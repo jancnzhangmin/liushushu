@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_04_032606) do
+ActiveRecord::Schema.define(version: 2020_03_08_150726) do
 
   create_table "citycodes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "citycode"
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_032606) do
     t.string "idback_content_type"
     t.integer "idback_file_size"
     t.datetime "idback_updated_at"
+    t.string "msg"
   end
 
   create_table "revicects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

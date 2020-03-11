@@ -43,6 +43,14 @@ class SidebarEntry
                       },
                   ]
               },
+                {
+                    href: realnames_path,
+                    title: '技工实名',
+                },
+                {
+                    href: tasks_path,
+                    title: '任务订单',
+                },
               {
                 href: '#',
                 title: 'Build Notes',

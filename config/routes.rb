@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'dashboards#index'
   resources :mytests
   resources :skillclas
   resources :evaluatetagdefs
@@ -36,9 +37,15 @@ Rails.application.routes.draw do
       get 'myorder_list' #我的订单选择技工列表
       get 'myorder_orderdetail' #我的订单选择技工明细
       post 'choiceartisan' #选择技工
+      get 'myorder_progress_list' #获取我的订单进行中列表
+      get 'get_becomeartison' #获取技工实名信息
     end
   end
   resources :citycodes
   resources :configs
+  resources :realnames
+  resources :tasks
+  resources :getopenids
+  resources :dashboards
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

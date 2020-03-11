@@ -1,0 +1,132 @@
+
+<% content_for :heading do %>
+  <i class='fal fa-th-list text-primary'></i>  实名认证
+<% end %>
+
+
+
+<div class="row">
+
+  <div class="col-sm-12">
+
+    <div class="card mb-g">
+
+
+      <div class="form-group card-header bg-white" style="display:none;">
+        <div class="row no-gutters align-items-center">
+          <div class="col">
+          </div>
+          <div class="col"></div>
+          <div class="col d-flex">
+            <div class="input-group">
+              <input type="text" id="search" class="form-control shadow-inset-2" placeholder="">
+              <div class="input-group-append">
+                <button id="searchbtn" class="btn btn-primary btn-icon waves-effect waves-themed"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--        <div class="input-group">-->
+        <!--          <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon5">-->
+        <!--          <div class="input-group-append">-->
+        <!--            <button class="btn btn-primary" type="button" id="button-addon5"><i class="fal fa-search"></i></button>-->
+        <!--          </div>-->
+        <!--        </div>-->
+      </div>
+      <div class="card-body">
+
+
+
+
+        <div class="frame-wrap p-0 border-0 m-0">
+
+          <table class="table m-0 table-bordered table-hover table-striped" id="table-example">
+
+            <thead>
+            <tr>
+              <th>openid</th>
+              <th>昵称</th>
+              <th>姓名</th>
+              <th>手机</th>
+              <th>状态</th>
+              <th width="180px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @realnames.each do |realname| %>
+              <tr>
+                <td><%= realname.user.openid.to_s %></td>
+                <td><%= realname.user.nickname.to_s %></td>
+                <td><%= realname.name %></td>
+                <td><%= realname.phone %></td>
+                <td>
+                  <% if realname.status == 0 %>
+                    <span class="color-info-500">待审核</span>
+                  <% elsif realname.status == 1 %>
+                    <span class="color-primary-500">审核通过</span>
+                  <% else %>
+                    <span class="color-danger-500">发回重审</span>
+                  <% end %>
+                </td>
+                <td style="padding: 5px;" align="center">
+                  <% if realname.status != 1 %>
+                    <%= link_to  edit_realname_path(realname), class:'btn btn-info btn-sm waves-effect waves-themed' do %>
+                      <span class="fal fa-recycle mr-1"></span> 审核
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <div class="frame-wrap mt-3">
+            <%= paginate @realnames %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<% content_for :scripts_block do %>
+
+  <script>
+
+      (function ($) {
+          $.getUrlParam = function (name) {
+              var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+              var r = window.location.search.substr(1).match(reg);
+              if (r != null) return unescape(r[2]); return null;
+          }
+      })(jQuery);
+
+      $('input:checkbox').change(function(){
+          if($(this).is(":checked")) {
+              $('#table-example').addClass( $(this).attr("data-class") );
+          } else {
+              $('#table-example').removeClass( $(this).attr("data-class") );
+          }
+      });
+
+      $('#searchbtn').click(function(){
+          var url = window.location.href = window.location.href.split('?')[0];
+          if($.getUrlParam('page')){
+              url += '?page=' + $.getUrlParam('page');
+          }else{
+              url += '?page=1'
+          }
+          if($('#search').val()){
+              url += '&searchkey=' + encodeURI(encodeURI($('#search').val()));
+          }
+          window.location.href = url;
+      });
+
+      if($.getUrlParam('searchkey')){
+          $('#search').val(decodeURI($.getUrlParam('searchkey')));
+      }
+
+  </script>
+
+<% end %>

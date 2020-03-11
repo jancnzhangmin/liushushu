@@ -1,0 +1,150 @@
+
+<% content_for :heading do %>
+  <i class='fal fa-th-list text-primary'></i>  任务订单
+<% end %>
+
+
+
+<div class="row">
+
+  <div class="col-sm-12">
+
+    <div class="card mb-g">
+
+
+      <div class="form-group card-header bg-white" style="display:none;">
+        <div class="row no-gutters align-items-center">
+          <div class="col">
+          </div>
+          <div class="col"></div>
+          <div class="col d-flex">
+            <div class="input-group">
+              <input type="text" id="search" class="form-control shadow-inset-2" placeholder="">
+              <div class="input-group-append">
+                <button id="searchbtn" class="btn btn-primary btn-icon waves-effect waves-themed"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--        <div class="input-group">-->
+        <!--          <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon5">-->
+        <!--          <div class="input-group-append">-->
+        <!--            <button class="btn btn-primary" type="button" id="button-addon5"><i class="fal fa-search"></i></button>-->
+        <!--          </div>-->
+        <!--        </div>-->
+      </div>
+      <div class="card-body">
+
+
+
+
+        <div class="frame-wrap p-0 border-0 m-0">
+
+          <table class="table m-0 table-bordered table-hover table-striped" id="table-example">
+
+            <thead>
+            <tr>
+              <th>订单编号</th>
+              <th>用户</th>
+
+              <th>服务地址</th>
+              <th>状态</th>
+              <th>下单时间</th>
+              <th>报价技工数量</th>
+              <th class="text-right">报价</th>
+              <th width="180px" class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @tasks.each do |task| %>
+              <tr>
+                <td><%= task.tasknumber %></td>
+                <td>
+                  <%= task.user.name.to_s.size == 0 ? task.user.nickname : task.user.name %>
+                </td>
+
+                <td><%= task.province %><%= task.city %><%= task.district %><%= task.address %></td>
+                <td>
+                  <% if task.choiceartisanstatus.to_i == 0 %>
+                    待选择工
+                  <% elsif task.choiceartisanstatus.to_i == 1 and task.submitaccept.to_i == 0 %>
+                    任务进行中
+                  <% elsif task.submitaccept.to_i == 1 and task.acceptstatus.to_i == 0 %>
+                    提交验收
+                  <% else %>
+                    已完成
+                  <% end %>
+                </td>
+                <td>
+                  <%= task.created_at.strftime('%Y-%m-%d %H:%M:%S') %>
+                </td>
+                <td>
+                  <%= task.offers.size %>
+                </td>
+                <td class="text-right">
+                  <% if task.offers.where('isselect = 1').size > 0 %>
+                    <%=  ActiveSupport::NumberHelper.number_to_currency(task.offers.where('isselect = 1').first.price,unit:'￥') %>
+                  <% else %>
+                    <%= ActiveSupport::NumberHelper.number_to_currency(0,unit:'￥') %>
+                  <% end %>
+                </td>
+                <td style="padding: 5px;" align="center">
+                  <%= link_to  task_path(task), class:'btn btn-info btn-sm waves-effect waves-themed' do %>
+                    <span class="fal fa-bars mr-1"></span> 明细
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <div class="frame-wrap mt-3">
+            <%= paginate @tasks %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<% content_for :scripts_block do %>
+
+  <script>
+
+      (function ($) {
+          $.getUrlParam = function (name) {
+              var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+              var r = window.location.search.substr(1).match(reg);
+              if (r != null) return unescape(r[2]); return null;
+          }
+      })(jQuery);
+
+      $('input:checkbox').change(function(){
+          if($(this).is(":checked")) {
+              $('#table-example').addClass( $(this).attr("data-class") );
+          } else {
+              $('#table-example').removeClass( $(this).attr("data-class") );
+          }
+      });
+
+      $('#searchbtn').click(function(){
+          var url = window.location.href = window.location.href.split('?')[0];
+          if($.getUrlParam('page')){
+              url += '?page=' + $.getUrlParam('page');
+          }else{
+              url += '?page=1'
+          }
+          if($('#search').val()){
+              url += '&searchkey=' + encodeURI(encodeURI($('#search').val()));
+          }
+          window.location.href = url;
+      });
+
+      if($.getUrlParam('searchkey')){
+          $('#search').val(decodeURI($.getUrlParam('searchkey')));
+      }
+
+  </script>
+
+<% end %>

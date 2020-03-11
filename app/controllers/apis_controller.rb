@@ -79,11 +79,41 @@ class ApisController < ApplicationController
 
   def get_userinfo
     user = User.find_by_token(params[:token])
+    taskids = [0]
+    taskids += user.offers.map{|n|n.task_id}
+    evalute_task_ids = [0]
+    evalute_task_ids += Task.where('id in (?) and acceptstatus = 1', taskids).ids
+    attiude = Evaluate.where('task_id in (?) and attiude > 0',evalute_task_ids).average('attiude')
+    attiude = 4.0 if attiude.to_f == 0
+    ability = Evaluate.where('task_id in (?) and ability > 0',evalute_task_ids).average('ability')
+    ability = 4.0 if ability.to_f == 0
+    speed = Evaluate.where('task_id in (?) and speed > 0',evalute_task_ids).average('speed')
+    speed = 4.0 if speed.to_f == 0
+    evalute = (attiude + ability + speed) / 3
+    isartisan = 0 #0用户 1技工 2审核中 3重审
+    if user.isartisan.to_i == 1
+      isartisan = 1
+    elsif  user.isartisan.to_i == 0 && user.realname && user.realname.status == 0
+      isartisan = 2
+    elsif  user.isartisan.to_i == 0 && user.realname && user.realname.status == -1
+      isartisan = 3
+    end
     param = {
         id:user.id,
-        name: user.name..to_s.size > 0 ? user.name.to_s : user.nickname.to_s,
+        name: user.name.to_s.size > 0 ? user.name.to_s : user.nickname.to_s,
         headurl: user.headurl.to_s,
-        servicecity: user.servicearea.city ? user.servicearea.city : '未定义'
+        servicecity: user.servicearea.city ? user.servicearea.city : '未定义',
+        myorder_choiceartisan_count: user.tasks.where('choiceartisanstatus = 0').size,
+        myorder_progress_count: user.tasks.where('choiceartisanstatus = 1 and submitaccept = 0').size,
+        myorder_accipt_count: user.tasks.where('submitaccept = 1 and acceptstatus = 0').size,
+        myorder_finish_count: user.tasks.where('acceptstatus = 1').size,
+        mytask_preorder_count: Task.where('id in (?) and choiceartisanstatus = 0', taskids).size,
+        mytask_progress_count: Task.where('id in (?) and choiceartisanstatus = 1 and submitaccept = 0', taskids).size,
+        mytask_accipt_count: Task.where('id in (?) and submitaccept = 1 and acceptstatus = 0', taskids).size,
+        mytask_finish_count: Task.where('id in (?) and acceptstatus = 1', taskids).size,
+        dealcount: Task.where('id in (?) and acceptstatus = 1', taskids).size,
+        evalute: ("%0.1f" % evalute),
+        isartisan: isartisan
     }
     return_res(param)
   end
@@ -161,6 +191,22 @@ class ApisController < ApplicationController
       realname.save
     end
     return_res('',status,msg)
+  end
+
+  def get_becomeartison
+    user = User.find_by_token(params[:token])
+    idfront = ''
+    idfront = user.realname.idfront.url if user.realname.idfront.present?
+    idback = ''
+    idback = user.realname.idback.url if user.realname.idback.present?
+    param = {
+        name: user.realname.name,
+        phone: user.realname.phone,
+        idfront: idfront,
+        idback: idback,
+        msg: user.realname.msg.to_s
+    }
+    return_res(param)
   end
 
   def get_user_skill
@@ -349,7 +395,7 @@ class ApisController < ApplicationController
   def get_artisan_list_by_skill
     skillcla = Skillcla.find_by_keyword(params[:type])
     skills = skillcla.skills
-    users = []
+    users = [0]
     skills.each do |skill|
       users += skill.users.ids
     end
@@ -362,7 +408,7 @@ class ApisController < ApplicationController
       offers.each do |offer|
         task = offer.task
         if task.acceptstatus == 1
-          tasks += task.id
+          tasks.push task.id
         end
       end
       tasks.uniq!
@@ -397,7 +443,7 @@ class ApisController < ApplicationController
     taskids = [0]
     taskids += offers.map{|n|n.task_id}
     finished = 0
-    tasks = Task.where('id in (?)', taskids).order('id desc').page(params[:page]).per(10)
+    tasks = Task.where('id in (?) and choiceartisanstatus = 0', taskids).order('id desc').page(params[:page]).per(10)
     finished = 1 if tasks.last_page?
     taskarr = []
     tasks.each do |task|
@@ -464,7 +510,15 @@ class ApisController < ApplicationController
     taskids = [0]
     taskids += offers.map(&:task_id)
     finished = 0
-    tasks = Task.where('id in (?) and acceptstatus <> 1',taskids).page(params[:page]).per(10)
+
+    if params[:type].to_i == 1
+      tasks = Task.where('id in (?) and choiceartisanstatus = 1 and submitaccept = 0', taskids).page(params[:page]).per(10)
+    elsif params[:type].to_i == 2
+      tasks = Task.where('id in (?) and submitaccept = 1 and acceptstatus = 0', taskids).page(params[:page]).per(10)
+    elsif params[:type].to_i == 3
+      tasks = Task.where('id in (?) and acceptstatus = 1', taskids).page(params[:page]).per(10)
+    end
+
     finished = 1 if tasks.last_page? || tasks.out_of_range?
     taskarr = []
     tasks.each do |task|
@@ -591,6 +645,39 @@ class ApisController < ApplicationController
     params = {
         tasks: taskarr,
         finished: finished
+    }
+    return_res(params)
+  end
+
+  def myorder_progress_list
+    user = User.find_by_token(params[:token])
+    if params[:type].to_i == 1
+      tasks = user.tasks.where('choiceartisanstatus = 1 and submitaccept = 0').page(params[:page]).per(8)
+    elsif params[:type].to_i == 2
+      tasks = user.tasks.where('submitaccept = 1 and acceptstatus = 0').page(params[:page]).per(8)
+    elsif params[:type].to_i ==3
+      tasks = user.tasks.where('acceptstatus = 1').page(params[:page]).per(8)
+    end
+    finished = 0
+    finished = 1 if tasks.last_page? || tasks.out_of_range?
+    taskarr = []
+    tasks.each do |task|
+      skill = task.skill
+      skillcla = skill.skillcla
+      param = {
+          id: task.id,
+          offer: ActiveSupport::NumberHelper.number_to_currency(task.offers.first.price,unit:'￥'),
+          servicetype: skillcla.name + ' ' + skill.name,
+          status: task.beginstatus == 1 ? '进行中' : '未开始',
+          phone: task.contactphone,
+          region: task.province + task.city + task.district,
+          address: task.address
+      }
+      taskarr.push param
+    end
+    params = {
+        finished: finished,
+        data: taskarr
     }
     return_res(params)
   end

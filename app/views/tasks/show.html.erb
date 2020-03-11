@@ -1,0 +1,145 @@
+
+<% content_for :heading do %>
+  <i class='subheader-icon fal fa-plus-circle'></i>  订单明细
+<% end %>
+
+<% content_for :head_block do %>
+  <%= stylesheet_link_tag 'smartadmin/fa-solid', media: 'screen, print' %>
+<% end %>
+
+<div class="row">
+  <div class="col-xl-12">
+
+
+
+    <!-- post -->
+    <div class="card mb-g border shadow-0">
+      <div class="card-header bg-white p-0">
+        <div class="p-3 d-flex flex-row">
+          <div class="d-block flex-shrink-0">
+            <%= image_tag 'smartadmin/demo/avatars/avatar-admin.png', width:'150px', class: 'img-fluid img-thumbnail', alt: '' %>
+          </div>
+          <div class="d-block ml-2">
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">用户：<%= @task.user.name.to_s.size > 0 ? @task.user.name.to_s : @task.user.nickaname.to_s %></span></span>
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">订单编号：<%= @task.tasknumber %></span></span>
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">服务分类：<%= @task.skill.name %></span></span>
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">联系方式：<%= @task.contactphone %></span></span>
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">服务地址：<%= @task.province %><%= @task.city %><%= @task.district %><%= @task.address %></span></span>
+
+          </div>
+          <span  class="d-inline-flex align-items-center text-dark ml-auto align-self-start">
+            <%= @task.created_at.strftime('%Y-%m-%d %H:%M:%S') %>
+          </span>
+        </div>
+      </div>
+      <div class="card-body ">
+        <p>
+          <%= @task.summary %>
+        </p>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex align-items-center">
+          <span class="text-sm text-muted font-italic"><i class="fal fa-clock mr-1"></i>
+            <% if @task.choiceartisanstatus.to_i == 0 %>
+                    待选择工
+                  <% elsif @task.choiceartisanstatus.to_i == 1 and @task.submitaccept.to_i == 0 %>
+                    任务进行中
+                  <% elsif @task.submitaccept.to_i == 1 and @task.acceptstatus.to_i == 0 %>
+                    提交验收
+                  <% else %>
+                    已完成
+                  <% end %>
+          </span>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card mb-g border shadow-0">
+      <div class="card-header bg-white">
+        <div class="row no-gutters align-items-center">
+          <div class="col">
+            <span class="h6 font-weight-bold text-uppercase">报价技工</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-header bg-white p-0">
+        <div class="row no-gutters row-grid align-items-stretch">
+          <div class="col-12 col-md">
+            <div class="text-uppercase text-muted py-2 px-3">技工</div>
+          </div>
+          <div class="col-sm-6 col-md-2 col-xl-1 hidden-md-down">
+            <div class="text-uppercase text-muted py-2 px-3">状态</div>
+          </div>
+          <div class="col-sm-6 col-md-3 hidden-md-down">
+            <div class="text-uppercase text-muted py-2 px-3">对订单的描述</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="row no-gutters row-grid">
+          <!-- thread -->
+          <% @task.offers.each do |offer| %>
+            <div class="col-12">
+              <div class="row no-gutters row-grid align-items-stretch">
+                <div class="col-md">
+                  <div class="p-3">
+                    <div class="d-flex">
+                      <%= image_tag 'smartadmin/demo/avatars/avatar-admin.png', class: 'img-fluid img-thumbnail', alt: '' %>
+                      <div class="d-inline-flex flex-column" style="margin-left: 10px;">
+                      <span class="fs-lg fw-500 d-block">
+                        <%= offer.task.user.name.to_s.size > 0 ? offer.task.user.name.to_s : offer.task.user.nickname.to_s %>&nbsp;<%= offer.task.user.phone.to_s %>
+                      </span>
+                        <div class="d-block text-muted fs-sm">
+                          成单量：<%= offer.task.user.tasks.where('acceptstatus = 1').size %>&nbsp;
+                          <% rateaverage = offer.user.rateaverage.to_f %>
+                          <% rateaverage = 4.0 if rateaverage == 0 %>
+                          <div class="d-flex mt-1 text-warning align-items-center">
+                            <% rateaverage.to_i.times do %>
+                              <i class="fas fa-star mr-1"></i>
+                            <% end %>
+                            <% (5 - rateaverage.to_i).times do %>
+                              <i class="fal fa-star mr-1"></i>
+                            <% end %>
+
+                            <span class="text-muted fs-xs font-italic">
+								<%= rateaverage %>
+							</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4 col-md-2 col-xl-1 hidden-md-down">
+                  <div class="p-3 p-md-3">
+                  <span class="d-block text-muted">
+                    <%= ActiveSupport::NumberHelper.number_to_currency(offer.price.to_f,unit:'￥') %>
+                  </span>
+                    <span class="d-block text-success">
+                    <% if offer.isselect == 1 %>
+                    <i class="fal fa-check"></i>
+                    <% end %>
+                  </span>
+                  </div>
+                </div>
+                <div class="col-8 col-md-3 hidden-md-down">
+                  <div class="p-3 p-md-3">
+                  <span class="d-block text-muted">
+                    <%= offer.summary %>
+                  </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
