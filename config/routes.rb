@@ -39,6 +39,8 @@ Rails.application.routes.draw do
       post 'choiceartisan' #选择技工
       get 'myorder_progress_list' #获取我的订单进行中列表
       get 'get_becomeartison' #获取技工实名信息
+      post 'change_task_status_start' #修改订单状态
+      post 'task_accept' #验收
     end
   end
   resources :citycodes

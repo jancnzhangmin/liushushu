@@ -185,10 +185,14 @@ class ApisController < ApplicationController
       msg = '验证码无效'
     else
       realname = user.realname
-      realname.name = params[:name]
-      realname.phone = params[:phone]
-      realname.status = 0
-      realname.save
+      if !realname
+        user.create_realname(name:params[:name], phone:params[:phone], status:0)
+      else
+        realname.name = params[:name]
+        realname.phone = params[:phone]
+        realname.status = 0
+        realname.save
+      end
     end
     return_res('',status,msg)
   end
@@ -587,6 +591,7 @@ class ApisController < ApplicationController
       commit_param = {
           id: progre.id,
           name: name,
+          headurl: user.headurl,
           publictime: compute_time(progre.created_at),
           summary: progre.summary,
           imgs: progreimgarr,
@@ -627,7 +632,7 @@ class ApisController < ApplicationController
   def submit_accept
     task = Task.find(params[:taskid])
     task.submitaccept = 1
-    task.submittime = Time.now
+    task.submitaccepttime = Time.now
     task.save
     return_res('')
   end
@@ -733,8 +738,48 @@ class ApisController < ApplicationController
     offer.save
     task = offer.task
     task.choiceartisanstatus = 1
+    task.submitaccept = 0
     task.choiceartisantime = Time.now
     task.save
+    return_res('')
+  end
+
+  def change_task_status_start
+    task = Task.find(params[:taskid])
+    task.beginstatus = 1
+    task.begintime = Time.now
+    task.save
+    return_res('')
+  end
+
+  def task_accept
+    task = Task.find(params[:taskid])
+    if params[:accept].to_i == 1
+      task.acceptstatus = 1
+      task.save
+      task.progres.create(summary:params[:summary], status:1)
+      task.evaluates.create(attiude:params[:attitude], ability:params[:ability], speed:params[:speed])
+      artisan = task.offers.where('isselect = 1').first.user
+      offers = artisan.offers.where('isselect = 1')
+      taskids = [0]
+      taskids += offers.map(&:task_id)
+      tasks = [0]
+      tasks += Task.where('id in (?) and acceptstatus = 1',taskids).ids
+      evaluates = Evaluate.where('task_id in (?)',tasks)
+      attitude = evaluates.where('attiude > 0').average('attiude')
+      attitude = 4.0 if attitude == 0
+      ability = evaluates.where('ability > 0').average('ability')
+      ability = 4.0 if ability ==0
+      speed = evaluates.where('speed > 0').average('speed')
+      speed = 4.0 if speed == 0
+      artisan.rateaverage = (attitude.to_f + ability.to_f + speed.to_f) / 3
+      artisan.servicecount = Task.where('id in (?) and acceptstatus = 1',taskids).size
+      artisan.save
+    else
+      task.submitaccept = 0
+      task.save
+      task.progres.create(summary:params[:summary], status: -1)
+    end
     return_res('')
   end
 
