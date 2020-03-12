@@ -298,7 +298,8 @@ class ApisController < ApplicationController
     finished = 0
     servicearea = user.servicearea
     tasks = Task.where('choiceartisanstatus = ?', 0)
-    tasks = tasks.where('adcode = ?',servicearea.adcode) if user.isartisan == 1 && servicearea
+    offers = user.offers
+    tasks = tasks.where('adcode like ?',servicearea.adcode[0,4] + '%') if user.isartisan == 1 && servicearea
     tasks = tasks.order('id desc').page(params[:page]).per(10)
     finished = 1  if tasks.last_page?
     task_arr = []
@@ -323,7 +324,9 @@ class ApisController < ApplicationController
           offer: task.offers.size,
           updated_at: task.updated_at
       }
-      task_arr.push param
+      if offers.where('task_id = ?',task.id).size == 0
+        task_arr.push param
+      end
     end
     params = {
         finished: finished,
@@ -370,24 +373,26 @@ class ApisController < ApplicationController
     end
     tasks = Task.where('id in (?) and acceptstatus = ?',tasks, 1)
     ability_evaluatetagdef = Evaluatetagdef.find_by_keyword('ability')
-    ability_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ?', ability_evaluatetagdef.id)
+    ability_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ? and rate > 0', ability_evaluatetagdef.id)
     speed_evaluatetagdef = Evaluatetagdef.find_by_keyword('speed')
-    speed_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ?', speed_evaluatetagdef.id)
+    speed_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ? and rate > 0', speed_evaluatetagdef.id)
     attitude_evaluatetagdef = Evaluatetagdef.find_by_keyword('attitude')
-    attitude_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ?', attitude_evaluatetagdef.id)
+    attitude_evaluatetag = user.evaluatetags.where('evaluatetagdef_id = ? and rate > 0', attitude_evaluatetagdef.id)
 
     param = {
         name: user.realname.name,
         phone: user.realname.phone,
-        servicecount: tasks.size,
-        ability: ability_evaluatetag.size > 0 ? ability_evaluatetag.average('rate') : 4.5,
-        speed: speed_evaluatetag.size > 0 ? speed_evaluatetag.average('rate') : 4.5,
-        attitude: attitude_evaluatetag.size > 0 ? attitude_evaluatetag.average('rate') : 4.5
+        servicecount: user.servicecount.to_i,
+        ability: ability_evaluatetag.size > 0 ? ("%0.1f" & ability_evaluatetag.average('rate')) : ("%0.1f" % 4),
+        speed: speed_evaluatetag.size > 0 ? ("%0.1f" & speed_evaluatetag.average('rate')) : ("%0.1f" % 4),
+        attitude: attitude_evaluatetag.size > 0 ? ("%0.1f" % attitude_evaluatetag.average('rate')) : ("%0.1f" % 4)
     }
 
+    describe = ''
+    describe = user.describe.content if user.describe
     params = {
         artisan: param,
-        describe: user.describe.content
+        describe: describe
     }
     return_res(params)
   end
@@ -413,17 +418,18 @@ class ApisController < ApplicationController
       end
       tasks.uniq!
       tasks = Task.where('id in (?)',tasks)
-      describe = user.describe.content
-      ds = JSON.parse(describe).map{|n|n["type"] == "txt" ? n["content"] : ''}.join(' ')
+      discribe = []
+      describe = user.describe.content if user.describe
+      ds = ''
+      ds = JSON.parse(describe).map{|n|n["type"] == "txt" ? n["content"] : ''}.join(' ') if user.describe
       evaluatetags = user.evaluatetags.where('rate > 0')
-      ev = 4.5
-      if evaluatetags.size > 0
-        ev = evaluatetags.average('rate')
-      end
+      ev = ("%0.1f" % 4)
+      ev = ("%0.1f" % user.rateaverage) if user.rateaverage.to_f > 0
       param = {
           id: user.id,
           name: user.realname.name,
           phone: user.realname.phone,
+          headurl: user.headurl.to_s,
           star: ev,
           servicecount: tasks.size,
           describe:ds
@@ -489,7 +495,7 @@ class ApisController < ApplicationController
         address: address,
         skill: skillcla,
         summary: task.summary,
-        updated_at: task.updated_at
+        updated_at: task.updated_at.strftime('%Y-%m-%d %H:%M:%S')
     }
     offer_param = {
         id: offer.id,
@@ -707,7 +713,7 @@ class ApisController < ApplicationController
           phone: offer.user.phone.to_s,
           price: ActiveSupport::NumberHelper.number_to_currency(offer.price,unit:'￥'),
           summary: offer.summary,
-          rateaverage: offer.user.rateaverage.to_f == 0 ? 4.5 : offer.user.rateaverage.to_f,
+          rateaverage: offer.user.rateaverage.to_f == 0 ? ("%0.1f" % 4) : ("%0.1f" % offer.user.rateaverage.to_f),
           servicecount: offer.user.servicecount.to_i,
           isselect: offer.isselect,
           updated_at: offer.updated_at

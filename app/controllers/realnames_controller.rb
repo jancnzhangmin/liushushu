@@ -32,6 +32,13 @@ class RealnamesController < ApplicationController
   def update
     respond_to do |format|
       if @realname.update(realname_params)
+        if @realname.status == 1
+          user = @realname.user
+          user.name = @realname.name
+          user.phone = @realname.phone
+          user.isartisan = 1
+          user.save
+        end
         format.html { redirect_to realnames_path, notice: 'Realname was successfully updated.' }
         format.json { render :show, status: :ok, location: @realname }
       else
