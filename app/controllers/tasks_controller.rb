@@ -2,9 +2,9 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]
 
   def index
-    @tasks = Task.page(params[:page]).per(15)
+    @tasks = Task.all.order('id desc').page(params[:page]).per(15)
     if params[:searchkey]
-      @tasks = Task.where('name like ?',"%#{URI::decode(params[:searchkey])}%").page(params[:page]).per(15)
+      @tasks = Task.where('name like ?',"%#{URI::decode(params[:searchkey])}%").order('id desc').page(params[:page]).per(params[:per])
     end
   end
 

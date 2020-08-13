@@ -6,8 +6,12 @@ class GetopenidsController < ApplicationController
   end
 
   def create
-    $client ||= WeixinAuthorize::Client.new('wxb3d1ca1df413ce9d', 'c4a1d6d2a1b5af73a6666e1308e61595')
+    $client ||= WeixinAuthorize::Client.new(Config.first.appid, Config.first.appsecret)
     res = $client.get_oauth_access_token(params[:code])
+    if res.code == 40001
+      $client = WeixinAuthorize::Client.new(Config.first.appid, Config.first.appsecret)
+      res = $client.get_oauth_access_token(params[:code])
+    end
     openid = res.result["openid"]
     user = User.find_by_openid(openid)
     if !user

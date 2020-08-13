@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_08_150726) do
+ActiveRecord::Schema.define(version: 2020_03_23_025123) do
 
   create_table "citycodes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "citycode"
@@ -152,18 +152,8 @@ ActiveRecord::Schema.define(version: 2020_03_08_150726) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "serviceareas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "user_id"
-    t.string "province"
-    t.string "city"
-    t.string "districe"
-    t.string "adcode"
-    t.decimal "lng", precision: 15, scale: 12
-    t.decimal "lat", precision: 15, scale: 12
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "citycode"
-  end
+# Could not dump table "serviceareas" because of following StandardError
+#   Unknown type 'geometry' for column 'location'
 
   create_table "skillclas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name"

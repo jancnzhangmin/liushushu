@@ -1,0 +1,136 @@
+
+<% content_for :heading do %>
+  <i class='fal fa-th-list text-primary'></i>  用户
+<% end %>
+
+
+
+<div class="row">
+
+  <div class="col-sm-12">
+
+    <div class="card mb-g">
+
+
+      <div class="form-group card-header bg-white" style="display:none;">
+        <div class="row no-gutters align-items-center">
+          <div class="col">
+          </div>
+          <div class="col"></div>
+          <div class="col d-flex">
+            <div class="input-group">
+              <input type="text" id="search" class="form-control shadow-inset-2" placeholder="">
+              <div class="input-group-append">
+                <button id="searchbtn" class="btn btn-primary btn-icon waves-effect waves-themed"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--        <div class="input-group">-->
+        <!--          <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon5">-->
+        <!--          <div class="input-group-append">-->
+        <!--            <button class="btn btn-primary" type="button" id="button-addon5"><i class="fal fa-search"></i></button>-->
+        <!--          </div>-->
+        <!--        </div>-->
+      </div>
+      <div class="card-body">
+
+
+
+
+        <div class="frame-wrap p-0 border-0 m-0">
+
+          <table class="table m-0 table-bordered table-hover table-striped" id="table-example">
+
+            <thead>
+            <tr>
+              <th></th>
+              <th>openid</th>
+              <th>昵称</th>
+              <th>姓名</th>
+              <th>手机</th>
+              <th>技工</th>
+              <th width="180px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td>
+                  <% if user.headurl.to_s.size > 0 %>
+                  <img src=<%= user.headurl %> width="40px">
+                  <% end %>
+                </td>
+                <td>
+                  <%= user.openid %>
+                </td>
+                <td><%= user.nickname.to_s %></td>
+                <td><%= user.name.to_s %></td>
+                <td>
+<%= user.phone.to_s %>
+                </td>
+                <td>
+                  <% if user.isartisan == 1 %>
+                  是
+                    <% else %>
+                  否
+                  <% end %>
+                </td>
+                <td style="padding: 5px;" align="center">
+
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <div class="frame-wrap mt-3">
+            <%= paginate @users %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<% content_for :scripts_block do %>
+
+  <script>
+
+      (function ($) {
+          $.getUrlParam = function (name) {
+              var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+              var r = window.location.search.substr(1).match(reg);
+              if (r != null) return unescape(r[2]); return null;
+          }
+      })(jQuery);
+
+      $('input:checkbox').change(function(){
+          if($(this).is(":checked")) {
+              $('#table-example').addClass( $(this).attr("data-class") );
+          } else {
+              $('#table-example').removeClass( $(this).attr("data-class") );
+          }
+      });
+
+      $('#searchbtn').click(function(){
+          var url = window.location.href = window.location.href.split('?')[0];
+          if($.getUrlParam('page')){
+              url += '?page=' + $.getUrlParam('page');
+          }else{
+              url += '?page=1'
+          }
+          if($('#search').val()){
+              url += '&searchkey=' + encodeURI(encodeURI($('#search').val()));
+          }
+          window.location.href = url;
+      });
+
+      if($.getUrlParam('searchkey')){
+          $('#search').val(decodeURI($.getUrlParam('searchkey')));
+      }
+
+  </script>
+
+<% end %>

@@ -200,15 +200,21 @@ class ApisController < ApplicationController
   def get_becomeartison
     user = User.find_by_token(params[:token])
     idfront = ''
-    idfront = user.realname.idfront.url if user.realname.idfront.present?
+    idfront = user.realname.idfront.url if user.realname && user.realname.idfront.present?
     idback = ''
-    idback = user.realname.idback.url if user.realname.idback.present?
+    idback = user.realname.idback.url if user.realname && user.realname.idback.present?
+    name = ''
+    name = user.realname.name.to_s if user.realname
+    phone = ''
+    phone = user.realname.phone.to_s if user.realname
+    msg = ''
+    msg = user.realname.msg.to_s if user.realname
     param = {
-        name: user.realname.name,
-        phone: user.realname.phone,
+        name: name,
+        phone: phone,
         idfront: idfront,
         idback: idback,
-        msg: user.realname.msg.to_s
+        msg: msg
     }
     return_res(param)
   end
@@ -247,9 +253,14 @@ class ApisController < ApplicationController
 
   def set_user_skill
     user = User.find_by_token(params[:token])
-    user.skills.destroy_all
+    #user.skills.destroy_all
     skill = Skill.find(params[:id])
-    user.skills << skill
+    if params[:isselect] == 0
+      user.skills.destroy skill
+    else
+      user.skills << skill
+    end
+
     return_res('')
   end
 
@@ -279,7 +290,7 @@ class ApisController < ApplicationController
   def pub_task
     user = User.find_by_token(params[:token])
     tasknumber = Time.now.strftime('%Y%m%d') + user.id.to_s + Time.now.strftime('%H%M%S')
-    user.tasks.create(
+    task = user.tasks.create(
         skill_id: params[:data][:skill_id],
         tasknumber: tasknumber,
         choiceartisanstatus: 0,
@@ -294,6 +305,7 @@ class ApisController < ApplicationController
         address: params[:data][:address],
         summary: params[:data][:summary]
     )
+    SendwxmsgJob.perform_later(task.id)
     return_res('')
   end
 
@@ -303,7 +315,7 @@ class ApisController < ApplicationController
     servicearea = user.servicearea
     tasks = Task.where('choiceartisanstatus = ?', 0)
     offers = user.offers
-    tasks = tasks.where('adcode like ?',servicearea.adcode[0,4] + '%') if user.isartisan == 1 && servicearea
+    #tasks = tasks.where('adcode like ?',servicearea.adcode[0,4] + '%') if user.isartisan == 1 && servicearea
     tasks = tasks.order('id desc').page(params[:page]).per(10)
     finished = 1  if tasks.last_page?
     task_arr = []
@@ -364,7 +376,8 @@ class ApisController < ApplicationController
   def order_offer
     user = User.find_by_token(params[:token])
     task = Task.find(params[:taskid])
-    task.offers.create(user_id:user.id, price:params[:price], summary:params[:summary])
+    offer = task.offers.create(user_id:user.id, price:params[:price], summary:params[:summary])
+    OffermsgJob.perform_later(offer.id)
     return_res('')
   end
 
@@ -385,6 +398,7 @@ class ApisController < ApplicationController
 
     param = {
         name: user.realname.name,
+        headurl: user.headurl.to_s,
         phone: user.realname.phone,
         servicecount: user.servicecount.to_i,
         ability: ability_evaluatetag.size > 0 ? ("%0.1f" & ability_evaluatetag.average('rate')) : ("%0.1f" % 4),
@@ -402,49 +416,82 @@ class ApisController < ApplicationController
   end
 
   def get_artisan_list_by_skill
+
     skillcla = Skillcla.find_by_keyword(params[:type])
     skills = skillcla.skills
     users = [0]
+    user = User.find_by_token(params[:token])
     skills.each do |skill|
-      users += skill.users.ids
+      users += skill.users.where('isartisan = 1').ids
     end
     users.uniq!
-    users = User.where('id in (?)', users)
     userarr = []
-    users.each do |user|
-      offers = user.offers
-      tasks = [0]
-      offers.each do |offer|
-        task = offer.task
-        if task.acceptstatus == 1
-          tasks.push task.id
-        end
+    if JSON.parse(params[:filter])["sort"] == 0
+      if JSON.parse(params[:filter])["order"] == -1
+        #users = User.where('id in (?) and id <> ? and adcode = ?',users, user.id, user.adcode).order('rateaverage desc').page(params[:page]).per(10)
+        users = User.where('id in (?) and id <> ? ',users, user.id).order('rateaverage desc').page(params[:page]).per(10)
+      else
+        #users = User.where('id in (?) and id <> ? and adcode = ?',users, user.id, user.adcode).order('rateaverage asc').page(params[:page]).per(10)
+        users = User.where('id in (?) and id <> ? ',users, user.id).order('rateaverage asc').page(params[:page]).per(10)
       end
-      tasks.uniq!
-      tasks = Task.where('id in (?)',tasks)
-      discribe = []
-      describe = user.describe.content if user.describe
-      ds = ''
-      ds = JSON.parse(describe).map{|n|n["type"] == "txt" ? n["content"] : ''}.join(' ') if user.describe
-      evaluatetags = user.evaluatetags.where('rate > 0')
-      ev = ("%0.1f" % 4)
-      ev = ("%0.1f" % user.rateaverage) if user.rateaverage.to_f > 0
-      param = {
-          id: user.id,
-          name: user.realname.name,
-          phone: user.realname.phone,
-          headurl: user.headurl.to_s,
-          star: ev,
-          servicecount: tasks.size,
-          describe:ds
-      }
-      userarr.push param
+      users.each do |us|
+        ds = ''
+        ds = JSON.parse(us.describe.content).map{|n|n["type"] == "txt" ? n["content"] : ''}.join(' ') if us.describe
+        name = ''
+        name = us.realname.name if us.realname
+        phone = ''
+        phone = us.realname.phone if us.realname
+        distance = '无可用位置'
+        distance = user.distance_to(us).round(1).to_s + '公里' if user.distance_to(us) < 5500
+        param = {
+            id: us.id,
+            name: name,
+            phone: phone,
+            headurl: us.headurl.to_s,
+            star: ("%0.1f" % us.rateaverage.to_f),
+            servicecount: us.servicecount.to_i,
+            describe: ds,
+            distance: distance
+        }
+        userarr.push param
+      end
+    else
+      #serviceareas = Servicearea.by_distance(:origin=>user).where('user_id in (?) and user_id <> ? and adcode = ?', users, user.id, user.adcode).page(params[:page]).per(10)
+      serviceareas = Servicearea.by_distance(:origin=>user).where('user_id in (?) and user_id <> ? ', users, user.id).page(params[:page]).per(10)
+      if JSON.parse(params[:filter])["order"] == -1
+        serviceareas = serviceareas.sort_by{|s| s.distance_from(user) }
+      else
+        serviceareas = serviceareas.sort_by{|s| s.distance_from(user) }
+        serviceareas.reverse!
+      end
+      serviceareas.each do |servicearea|
+        us = servicearea.user
+        ds = ''
+        ds = JSON.parse(us.describe.content).map{|n|n["type"] == "txt" ? n["content"] : ''}.join(' ') if us.describe
+        name = ''
+        name = us.realname.name if us.realname
+        phone = ''
+        phone = us.realname.phone if us.realname
+        distance = '无可用位置'
+        distance = user.distance_to(servicearea).round(1).to_s + '公里' if user.distance_to(servicearea) < 5500
+        param = {
+            id: us.id,
+            name: name,
+            phone: phone,
+            headurl: us.headurl.to_s,
+            star: ("%0.1f" % us.rateaverage.to_f),
+            servicecount: us.servicecount.to_i,
+            describe: ds,
+            distance: distance
+        }
+        userarr.push param
+      end
     end
-    params = {
+    return_params = {
         artisan: userarr,
         skillcla: skillcla.name
     }
-    return_res(params)
+    return_res(return_params)
   end
 
   def mytask_orderlist
@@ -501,12 +548,16 @@ class ApisController < ApplicationController
         summary: task.summary,
         updated_at: task.updated_at.strftime('%Y-%m-%d %H:%M:%S')
     }
-    offer_param = {
-        id: offer.id,
-        price: offer.price,
-        summary: offer.summary,
-        updated_at: offer.updated_at
-    }
+    if offer
+      offer_param = {
+          id: offer.id,
+          price: offer.price,
+          summary: offer.summary,
+          updated_at: offer.updated_at
+      }
+    else
+      offer_param = {}
+    end
     params = {
         task: task_param,
         offer: offer_param
@@ -715,6 +766,7 @@ class ApisController < ApplicationController
           id: offer.id,
           artisanid: offer.user.id,
           name: offer.user.name,
+          headurl: offer.user.headurl.to_s,
           phone: offer.user.phone.to_s,
           price: ActiveSupport::NumberHelper.number_to_currency(offer.price,unit:'￥'),
           summary: offer.summary,
@@ -780,6 +832,45 @@ class ApisController < ApplicationController
       task.save
       task.progres.create(summary:params[:summary], status: -1)
     end
+    return_res('')
+  end
+
+  def set_location
+    user = User.find_by_token(params[:token])
+    user.lat = params[:latitude]
+    user.lng = params[:longitude]
+    user.save
+    uri = 'https://restapi.amap.com/v3/geocode/geo?address=' + params[:address].encoding.to_s + '&key=be0feac402c46b1a63da146226a31a15'
+    uri = 'https://restapi.amap.com/v3/geocode/regeo?location=' + params[:longitude].to_s + ',' + params[:latitude].to_s + '&key=be0feac402c46b1a63da146226a31a15&radius=0'
+    html_response = nil
+    open(uri) do |http|
+      html_response = http.read
+    end
+    servicearea = user.servicearea
+    adcode = JSON.parse(html_response)["regeocode"]["addressComponent"]["adcode"][0,4].ljust(6,"0")
+    city = Citycode.find_by_adcode(adcode).name
+    if !servicearea
+      servicearea = user.create_servicearea(city:city, lng:user.lng, lat:user.lat)
+    else
+      servicearea.city = city
+      servicearea.lng = user.lng
+      servicearea.lat = user.lat
+      servicearea.save
+    end
+    return_res('')
+  end
+
+  def set_user_lnglat
+    user = User.find_by_token(params[:token])
+    user.lng = params[:lng]
+    user.lat = params[:lat]
+    uri = 'https://restapi.amap.com/v3/geocode/regeo?location=' + params[:lng].to_s + ',' + params[:lat].to_s + '&key=be0feac402c46b1a63da146226a31a15&radius=0'
+    html_response = nil
+    open(uri) do |http|
+      html_response = http.read
+    end
+    user.adcode = JSON.parse(html_response)["regeocode"]["addressComponent"]["adcode"][0,4].ljust(6,"0")
+    user.save
     return_res('')
   end
 

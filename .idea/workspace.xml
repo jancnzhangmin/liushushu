@@ -3,13 +3,38 @@
   <component name="ChangeListManager">
     <list default="true" id="786cfea1-580b-457e-8ef0-9644fab61995" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/apis_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/apis_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/getopenids_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/getopenids_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/realnames_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/realnames_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/tasks_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/tasks_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/servicearea.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/servicearea.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/sidebar_entry.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/sidebar_entry.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/tasks/show.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/tasks/show.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/puma.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/puma.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -23,7 +48,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../feituan" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
@@ -129,7 +154,7 @@
       <item itemvalue="Rake.spec: liushushu" />
     </list>
   </component>
-  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" />
+  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="false" RAILS_SPRING_PRE_LOADER_OPTION="false" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -161,7 +186,29 @@
       <workItem from="1582767572646" duration="3745000" />
       <workItem from="1583372127257" duration="9706000" />
       <workItem from="1583655233838" duration="46046000" />
-      <workItem from="1583895890877" duration="23659000" />
+      <workItem from="1583895890877" duration="42079000" />
+      <workItem from="1584323647516" duration="7936000" />
+      <workItem from="1584844236576" duration="39297000" />
+      <workItem from="1585710402303" duration="4786000" />
+      <workItem from="1586420593235" duration="2706000" />
+      <workItem from="1588236188814" duration="644000" />
+      <workItem from="1588663420685" duration="2672000" />
+      <workItem from="1589470705045" duration="9949000" />
+      <workItem from="1591694176931" duration="1232000" />
+      <workItem from="1591883503215" duration="3756000" />
+      <workItem from="1592181300501" duration="596000" />
+      <workItem from="1592358604557" duration="613000" />
+      <workItem from="1592414025687" duration="32000" />
+      <workItem from="1592414077874" duration="616000" />
+      <workItem from="1593502137024" duration="686000" />
+      <workItem from="1594369432884" duration="1415000" />
+      <workItem from="1594639392952" duration="2687000" />
+      <workItem from="1594777797450" duration="330000" />
+      <workItem from="1596447504618" duration="803000" />
+      <workItem from="1596471757095" duration="5300000" />
+      <workItem from="1596696788644" duration="1911000" />
+      <workItem from="1596904572305" duration="1846000" />
+      <workItem from="1597021352252" duration="1848000" />
     </task>
     <servers />
   </component>
@@ -176,5 +223,15 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1597214979378">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1597214979378" />
+    <state x="636" y="253" width="647" height="534" key="find.popup" timestamp="1594370056967">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="636" y="253" width="647" height="534" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1594370056967" />
   </component>
 </project>

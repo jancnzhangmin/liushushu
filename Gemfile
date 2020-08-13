@@ -8,6 +8,7 @@ gem "paperclip", "~> 6.0.0"
 gem 'kaminari'
 gem 'ruby-pinyin'
 gem 'weixin_authorize'
+gem 'geokit-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.1'

@@ -1,9 +1,8 @@
 class RealnamesController < ApplicationController
-
   before_action :set_realname, only: [:show, :edit, :update, :destroy]
 
   def index
-    @realnames = Realname.page(params[:page]).per(15)
+    @realnames = Realname.order('id desc').page(params[:page]).per(15)
   end
 
   def show
@@ -39,6 +38,7 @@ class RealnamesController < ApplicationController
           user.isartisan = 1
           user.save
         end
+        RealnamewxmsgJob.perform_later(@realname.id)
         format.html { redirect_to realnames_path, notice: 'Realname was successfully updated.' }
         format.json { render :show, status: :ok, location: @realname }
       else

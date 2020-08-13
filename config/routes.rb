@@ -41,6 +41,8 @@ Rails.application.routes.draw do
       get 'get_becomeartison' #获取技工实名信息
       post 'change_task_status_start' #修改订单状态
       post 'task_accept' #验收
+      post 'set_location' #接收经纬度
+      post 'set_user_lnglat' #接收用户经纬度
     end
   end
   resources :citycodes
@@ -49,5 +51,7 @@ Rails.application.routes.draw do
   resources :tasks
   resources :getopenids
   resources :dashboards
+  resources :users
+  resources :productclas
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

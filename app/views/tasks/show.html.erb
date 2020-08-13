@@ -17,10 +17,10 @@
       <div class="card-header bg-white p-0">
         <div class="p-3 d-flex flex-row">
           <div class="d-block flex-shrink-0">
-            <%= image_tag 'smartadmin/demo/avatars/avatar-admin.png', width:'150px', class: 'img-fluid img-thumbnail', alt: '' %>
+            <%= image_tag @task.user.headurl, width:'150px', class: 'img-fluid img-thumbnail', alt: '' %>
           </div>
           <div class="d-block ml-2">
-            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">用户：<%= @task.user.name.to_s.size > 0 ? @task.user.name.to_s : @task.user.nickaname.to_s %></span></span>
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">用户：<%= @task.user.name.to_s.size > 0 ? @task.user.name.to_s : @task.user.nickname.to_s %></span></span>
             <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">订单编号：<%= @task.tasknumber %></span></span>
             <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">服务分类：<%= @task.skill.name %></span></span>
             <span class="h6 font-weight-bold text-uppercase d-block m-0"><span class="fw-400">联系方式：<%= @task.contactphone %></span></span>

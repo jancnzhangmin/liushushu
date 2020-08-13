@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  acts_as_mappable
   has_many :tasks
   has_many :offers
   has_many :evaluatetags
