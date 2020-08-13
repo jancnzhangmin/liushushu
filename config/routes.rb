@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   resources :skillclas
   resources :evaluatetagdefs
   resources :skills
+  resources :logins
+  resources :admins
   resources :apis do
     collection do
       get 'get_skills' #获取技能列表

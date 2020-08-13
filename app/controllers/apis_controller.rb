@@ -1,4 +1,4 @@
-class ApisController < ApplicationController
+class ApisController < ActionController::Base
   skip_before_action :verify_authenticity_token
   def get_skills
     skillcla_arr = []

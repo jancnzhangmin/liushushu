@@ -55,6 +55,10 @@ class SidebarEntry
                     href: users_path,
                     title: '用户',
                 },
+                {
+                    href: admins_path,
+                    title: '管理员',
+                },
               {
                 href: '#',
                 title: 'Build Notes',

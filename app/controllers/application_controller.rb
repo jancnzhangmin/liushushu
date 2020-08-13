@@ -1,6 +1,14 @@
 class ApplicationController < ActionController::Base
-
   require 'net/http'
+  before_action :authverify
+  def authverify
+    if(!session['id'])
+        if(params[:controller] != 'logins')
+          redirect_to logins_path
+        end
+    end
+  end
+  
   def sendvcode(phone,vcode)
     #phone=params[:phone]
     #vcode=randnumber

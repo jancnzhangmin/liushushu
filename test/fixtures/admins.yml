@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nikname: MyString
+  username: MyString
+  password: MyString
+  isenable: 1
+
+two:
+  nikname: MyString
+  username: MyString
+  password: MyString
+  isenable: 1

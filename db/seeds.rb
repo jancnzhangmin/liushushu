@@ -5,6 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+require 'bcrypt'
 
 evaluatetagdef = Evaluatetagdef.find_by_keyword('ability')
 if evaluatetagdef
@@ -63,4 +64,13 @@ if config
 else
   Config.create(appid:'000000000', appsecret:'000000000')
   puts "\033[32m配置数据初始化完成\033[0m\n"
+end
+
+admin = Admin.find_by_username('admin')
+if admin
+  puts "\033[36m后台管理员存在，本次忽略\033[0m\n"
+else
+  password = BCrypt::Password.create("admin")
+  Admin.create(nikname:'后台管理员', username:'admin',password:password)
+  puts "\033[32m后台管理员初始化完成\033[0m\n"
 end

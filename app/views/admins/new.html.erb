@@ -1,0 +1,28 @@
+<main id="js-page-content" role="main" class="page-content">
+  <div class="alert alert-info" role="alert" style="margin-top:-35px;display: none;">
+    <strong>Info!</strong> Alert for passing information to user.
+  </div>
+  <div class="row" style="margin-top: -20px;">
+    <div class="col-xl-12">
+      <!--Basic tables-->
+      <div id="panel-1" class="panel">
+        <div class="panel-hdr">
+          <h2>
+            新增管理员 <span class="fw-300"><i></i></span>
+          </h2>
+          <div class="panel-toolbar">
+
+          </div>
+        </div>
+        <div class="panel-container show">
+
+
+            <%= render 'form', admin: @admin %>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
